@@ -15,9 +15,12 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from counter.views import *
+from djnd_landing.views import *
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^add/(?P<type_>[\w].+)', plusOne),
     url(r'^counter/(?P<type_>[\w].+)', getCoutner),
+    url(r'^postman/', sender),
+    url(r'^getExposed/(?P<category>[\w].+)', getExposed),
 ]
