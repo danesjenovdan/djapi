@@ -25,7 +25,7 @@ SECRET_KEY = 'aww^yh!27t*-ulh-s!b-5jjrv_doahresr^6)5!=0c)z2!z4#9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -101,3 +101,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.danesjenovdan.si'
+EMAIL_HOST_USER = 'filip@danesjenovdan.si'
+EMAIL_HOST_PASSWORD = 'Iamanonsmoker'
+DEFAULT_FROM_EMAIL = 'agrument@danesjenovdan.si'
+SERVER_EMAIL = 'vsi@danesjenovdan.si'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
