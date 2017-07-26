@@ -9,8 +9,8 @@ class Timestampable(models.Model):
     An abstract base class model that provides self-updating
     ``created`` and ``modified`` fields.
     """
-    created_at = AutoCreatedField(_('creation time'))
-    updated_at = AutoLastModifiedField(_('last modification time'))
+    created_at = AutoCreatedField('creation time')
+    updated_at = AutoLastModifiedField('last modification time')
 
     class Meta:
         abstract = True
@@ -22,6 +22,11 @@ class Exposed(Timestampable):
     label = models.CharField(max_length=128)
     url = models.URLField(max_length=256)
 
+    def __str__(self):
+        return self.label
 
 class Category(Timestampable):
     name = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.name

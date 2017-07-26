@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.forms.models import model_to_dict
 from .models import Exposed
 
@@ -9,9 +9,8 @@ def getExposed(request, category):
     exposed = Exposed.objects.filter(category__name=category)
     if exposed:
         latest = exposed.latest('created_at')
-        dic = model_to_dict(latest, fields=[field.name
-                                            for field
-                                            in speech._meta.fields])
+        dic = model_to_dict(latest, fields=['label', 'title', 'url'])
         dic.update({'status': 'OK'})
         return JsonResponse(dic)
-    return raise Http404('There\'s no exposed news')
+    else:    
+        raise Http404('There\'s no exposed news')
