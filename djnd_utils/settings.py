@@ -38,6 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'counter',
+    'djnd_landing',
+    'corsheaders',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -49,6 +51,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 )
 
 ROOT_URLCONF = 'djnd_utils.urls'
@@ -82,6 +86,12 @@ DATABASES = {
     }
 }
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
+STATIC_ROOT = os.path.join('/home/muki/djstatic/djnd_utils')
+STATIC_URL = 'http://djstatic.knedl.si/djnd_utils/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -100,7 +110,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_URL = '/static/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -111,3 +120,5 @@ DEFAULT_FROM_EMAIL = '***REMOVED***'
 SERVER_EMAIL = '***REMOVED***'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
+
+CORS_ORIGIN_ALLOW_ALL = True
