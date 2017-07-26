@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from django.http import JsonResponse, Http404
 from django.forms.models import model_to_dict
 from .models import Exposed
