@@ -4,9 +4,9 @@
 Counter app.
 usage: 
 * Increase counter
- /add/"coutner" (GET)
+ /add/"counter" (GET)
 * Get counter value:
- /cunter/"coutner" (GET)
+ /counter/"counter" (GET)
 * Send us your mail
  /postman/ (POST
  {'content': 'text'}
