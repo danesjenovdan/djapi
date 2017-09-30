@@ -14,7 +14,7 @@ usage:
   
 
 ## djnd_landing
-App, for return latest exposed news.
+App, for return n latest exposed news.
 usage: 
 * Get exposed news
- /getExposed/"category"/
+ /getExposed/{category}/{?num_of_news}/
