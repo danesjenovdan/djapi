@@ -15,13 +15,15 @@ def getExposed(request, category, num_of_news='1'):
             data = {'label': news.label,
                     'title': news.title,
                     'url': news.url,
-                    'date': news.date.isoformat()}
+                    'date': news.date.isoformat(),
+                    'image': news.image.url if news.image else ''}
         else:
             data = {}
             data['data'] = [{'label': news.label,
                              'title': news.title,
                              'url': news.url,
-                             'date': news.date.isoformat()} for news in list(exposed)[:int(num_of_news)]]
+                             'date': news.date.isoformat(),
+                             'image': news.image.url if news.image else ''} for news in list(exposed)[:int(num_of_news)]]
             print(data['data'])
         data.update({'status': 'OK'})
         return JsonResponse(data, safe=False)
