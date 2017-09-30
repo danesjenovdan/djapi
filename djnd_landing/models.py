@@ -25,6 +25,7 @@ class Exposed(Timestampable):
     title = models.CharField(max_length=128, default='Izpostavljeno')
     label = HTMLField()
     url = models.URLField(max_length=256, null=True, blank=True)
+    image = models.ImageField(upload_to='images/', height_field=None, width_field=None, max_length=1000, null=True, blank=True)
     date = models.DateField(auto_now=True)
 
     def __str__(self):
