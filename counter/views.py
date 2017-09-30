@@ -8,6 +8,10 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
+
+def index(request):
+    return HttpResponse("")
+
 def plusOne(request, type_):
 	Vote(type_of=type_).save()
 	return HttpResponse("Added")

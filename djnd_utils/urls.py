@@ -18,6 +18,7 @@ from counter.views import *
 from djnd_landing.views import *
 
 urlpatterns = [
+    url(r'^$', index, name='home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^add/(?P<type_>[\w].+)', plusOne),
     url(r'^counter/(?P<type_>[\w].+)', getCoutner),
