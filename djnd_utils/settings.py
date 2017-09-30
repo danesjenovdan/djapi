@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'counter',
     'djnd_landing',
     'corsheaders',
+    'tinymce',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -113,12 +114,5 @@ USE_TZ = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'smtp.danesjenovdan.si'
-EMAIL_HOST_USER = 'filip@danesjenovdan.si'
-EMAIL_HOST_PASSWORD = 'Iamanonsmoker'
-DEFAULT_FROM_EMAIL = 'agrument@danesjenovdan.si'
-SERVER_EMAIL = 'vsi@danesjenovdan.si'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
 
 CORS_ORIGIN_ALLOW_ALL = True

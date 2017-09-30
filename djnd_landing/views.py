@@ -6,12 +6,23 @@ from .models import Exposed
 # Create your views here.
 
 
-def getExposed(request, category):
-    exposed = Exposed.objects.filter(category__name=category)
+def getExposed(request, category, num_of_news='1'):
+    exposed = Exposed.objects.filter(category__name=category).order_by('-created_at')
     if exposed:
-        latest = exposed.latest('created_at')
-        dic = model_to_dict(latest, fields=['label', 'title', 'url'])
-        dic.update({'status': 'OK'})
-        return JsonResponse(dic)
+        if num_of_news == '1':
+            news = exposed[0]
+            data = {'label': news.label,
+                    'title': news.title,
+                    'url': news.url,
+                    'date': news.date.isoformat()}
+        else:
+            data = {}
+            data['data'] = [{'label': news.label,
+                             'title': news.title,
+                             'url': news.url,
+                             'date': news.date.isoformat()} for news in list(exposed)[:int(num_of_news)]]
+            print(data['data'])
+        data.update({'status': 'OK'})
+        return JsonResponse(data, safe=False)
     else:    
         raise Http404('There\'s no exposed news')
