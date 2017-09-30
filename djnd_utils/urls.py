@@ -22,5 +22,7 @@ urlpatterns = [
     url(r'^add/(?P<type_>[\w].+)', plusOne),
     url(r'^counter/(?P<type_>[\w].+)', getCoutner),
     url(r'^postman/', sender),
-    url(r'^getExposed/(?P<category>[\w].+)/$', getExposed),
+    url(r'^getExposed/(?P<category>\w+)/$', getExposed),
+    url(r'^getExposed/(?P<category>\w+)/(?P<num_of_news>\d+)/$', getExposed),
+    url(r'^tinymce/', include('tinymce.urls')),
 ]

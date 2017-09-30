@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'counter',
     'djnd_landing',
     'corsheaders',
+    'tinymce',
 )
 
 MIDDLEWARE_CLASSES = (

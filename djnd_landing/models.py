@@ -2,6 +2,7 @@
 from django.db import models
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
 from django.utils.encoding import python_2_unicode_compatible
+from tinymce.models import HTMLField
 
 # Create your models here.
 
@@ -22,8 +23,9 @@ class Timestampable(models.Model):
 class Exposed(Timestampable):
     category = models.ForeignKey('Category')
     title = models.CharField(max_length=128, default='Izpostavljeno')
-    label = models.CharField(max_length=128)
-    url = models.URLField(max_length=256)
+    label = HTMLField()
+    url = models.URLField(max_length=256, null=True, blank=True)
+    date = models.DateField(auto_now=True)
 
     def __str__(self):
         return self.label
