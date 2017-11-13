@@ -38,14 +38,14 @@ def sender(request):
 	return HttpResponse("Sent")
 
 
-def addSigniture(request):
+def addSignature(request):
 	name = request.GET.get('name', '')
 	email = request.GET.get('email', '')
 	peticija = request.GET.get('peticija', '')
 	MailAddress(e_mail=email, type_of=peticija, name=name).save()
 	return HttpResponse("Saved")
 
-def getAllSignitures(request):
+def getAllSignatures(request):
 	peticija = request.GET.get('peticija', '')
 	names = MailAddress.objects.filter(type_of=peticija).values_list('name', flat=True)
 	out = ', '.join(list(names))
