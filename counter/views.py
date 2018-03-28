@@ -2,10 +2,26 @@
 
 from django.shortcuts import render
 from .models import Vote, MailAddress
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse 
 from django.core.mail import send_mail
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+
+from HTMLParser import HTMLParser
+
+class MLStripper(HTMLParser):
+    def __init__(self):
+        self.reset()
+        self.fed = []
+    def handle_data(self, d):
+        self.fed.append(d)
+    def get_data(self):
+        return ''.join(self.fed)
+
+def strip_tags(html):
+    s = MLStripper()
+    s.feed(html)
+    return s.get_data()
 
 # Create your views here.
 
@@ -39,8 +55,8 @@ def sender(request):
 
 
 def addSignature(request):
-	name = request.GET.get('name', '')
-	email = request.GET.get('email', '')
+	name = strip_tags(request.GET.get('name', ''))
+	email = strip_tags(request.GET.get('email', ''))
 	peticija = request.GET.get('peticija', '')
 	MailAddress(e_mail=email, type_of=peticija, name=name).save()
 	return HttpResponse("Saved")
@@ -55,3 +71,28 @@ def getNumberOfSignatures(request):
 	peticija = request.GET.get('peticija', '')
 	mail_count = MailAddress.objects.filter(type_of=peticija).count()
 	return HttpResponse(str(mail_count))
+
+
+def getKura(request):
+	peticije = ['imasjajca.djndtrue.dzzztrue', 'imasjajca.djndtrue.dzzzfalse', 'imasjajca.djndfalse.dzzzfalse', 'imasjajca.djndfalse.dzzztrue']
+	hide = 'imasjajcaHIDE'
+	all_mails = MailAddress.objects.filter(type_of__in=peticije)
+
+	visited = []
+	duplicated = []
+	mejlz = []
+	for mail in all_mails:
+		if mail.e_mail in visited:
+			duplicated.append(mail.id)
+			mejlz.append(mail.e_mail)
+		else:
+			visited.append(mail.e_mail)
+
+	counter = all_mails.count()
+	all_mails = all_mails.exclude(id__in=duplicated)
+
+	exclude = MailAddress.objects.filter(type_of=hide)
+	all_mails=all_mails.exclude(e_mail__in=exclude.values_list("e_mail", flat=True))
+	names = all_mails.values_list('name', flat=True)
+	out = ', '.join(list(names))
+	return JsonResponse({'names': out, 'counter': counter})

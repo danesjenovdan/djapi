@@ -31,4 +31,5 @@ urlpatterns = [
     url(r'^getExposed/(?P<category>\w+)/$', getExposed),
     url(r'^getExposed/(?P<category>\w+)/(?P<num_of_news>\d+)/$', getExposed),
     url(r'^tinymce/', include('tinymce.urls')),
+    url(r'^getKuraSignatures/', getKura),
 ]
