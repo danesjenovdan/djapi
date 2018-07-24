@@ -9,6 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from HTMLParser import HTMLParser
 
+import os
+import tweepy
 import requests
 
 class MLStripper(HTMLParser):
@@ -189,3 +191,35 @@ def exportKuraDJND():
     with open('all.txt','w') as out:
         out.writelines([str(name.encode('utf-8').strip() + "\n") for name in all_emails])
 
+
+@csrf_exempt
+def sendTweet(request):
+    if request.method == 'POST':
+        secret = request.POST.get('secret', '')
+        image_url = request.POST.get('image_url', '')
+        tweet_text = strip_tags(request.POST.get('tweet_text', ''))
+        if secret and tweet_text:
+            if secret == settings.TWITTER_SEND_TWEET_SECRET:
+                auth = tweepy.OAuthHandler(settings.TWITTER_API['consumer_key'], settings.TWITTER_API['consumer_secret'])
+                auth.set_access_token(settings.TWITTER_API['access_token'], settings.TWITTER_API['access_token_secret'])
+                api = tweepy.API(auth)
+
+                if image_url and (image_url.startswith('http://') or image_url.startswith('https://')):
+                    filename = 'tweet_temp.jpg'
+                    request = requests.get(image_url, stream=True)
+                    if request.status_code == 200:
+                        with open(filename, 'wb') as image:
+                            for chunk in request:
+                                image.write(chunk)
+
+                        status = api.update_with_media(filename, status=tweet_text)
+                        os.remove(filename)
+                    else:
+                        return HttpResponse('Napaka! (image_url)', status=400)
+                else:
+                    status = api.update_status(status=tweet_text)  # status = tweet 
+
+                return HttpResponse('Poslano!')
+            return HttpResponse('Napaka! (secret)', status=400)
+        return HttpResponse('Napaka! (params)', status=400)
+    return HttpResponse('Napaka!', status=400)
