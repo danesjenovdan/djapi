@@ -65,3 +65,5 @@ target/
 
 # Static
 static/
+settings.py
+db.sqlite3

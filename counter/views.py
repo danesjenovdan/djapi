@@ -9,6 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from HTMLParser import HTMLParser
 
+import requests
+
 class MLStripper(HTMLParser):
     def __init__(self):
         self.reset()
@@ -58,8 +60,41 @@ def addSignature(request):
 	name = strip_tags(request.GET.get('name', ''))
 	email = strip_tags(request.GET.get('email', ''))
 	peticija = request.GET.get('peticija', '')
-	MailAddress(e_mail=email, type_of=peticija, name=name).save()
-	return HttpResponse("Saved")
+	if peticija and name and email:
+		MailAddress(e_mail=email, type_of=peticija, name=name).save()
+		return HttpResponse("Saved")
+	return HttpResponse('Napaka, manjkajo parametri!')
+
+
+@csrf_exempt
+def addSignatureMail(request):
+    if request.method == 'POST':
+        peticija = request.POST.get('peticija', '')
+        name = strip_tags(request.POST.get('name', ''))
+        email = strip_tags(request.POST.get('email', ''))
+        subject = strip_tags(request.POST.get('subject', ''))
+        content = request.POST.get('content', '')
+        if peticija and name and email and subject and content:
+            MailAddress(e_mail=email, type_of=peticija, name=name).save()
+
+            referer = request.META.get('HTTP_REFERER', '')
+            if '//danesjenovdan.si/' in referer:
+                requests.post(
+                    settings.MAILGUN_API,
+                    auth=('api', settings.MAILGUN_ACCESS_KEY),
+                    data={
+                        'from': settings.FROM_MAIL,
+                        'to': email,
+                        'subject': subject,
+                        'text': strip_tags(content),
+                        'html': content,
+                    }
+                )
+
+            return HttpResponse('Saved')
+        return HttpResponse('Napaka, manjkajo parametri!')
+    return HttpResponse('Napaka!')
+
 
 def getAllSignatures(request):
 	peticija = request.GET.get('peticija', '')
@@ -71,6 +106,25 @@ def getNumberOfSignatures(request):
 	peticija = request.GET.get('peticija', '')
 	mail_count = MailAddress.objects.filter(type_of=peticija).count()
 	return HttpResponse(str(mail_count))
+
+
+def getAllSignaturesAndCountForMultiple(request):
+    peticije = request.GET.get('peticije', '')
+
+    out = ''
+    counter = 0
+
+    if peticije:
+        peticije = peticije + '.'
+        all_emails = MailAddress.objects.filter(type_of__startswith=peticije).values_list('name', 'e_mail')
+
+        email_set = set()
+        all_emails = [email_set.add(e[1]) or e[0] for e in all_emails if e[1] not in email_set]
+
+        out = ', '.join(all_emails)
+        counter = len(all_emails)
+
+    return JsonResponse({'names': out, 'counter': counter})
 
 
 def getKura(request):
@@ -96,3 +150,42 @@ def getKura(request):
 	names = all_mails.values_list('name', flat=True)
 	out = ', '.join(list(names))
 	return JsonResponse({'names': out, 'counter': counter})
+
+
+def getFasterKura(request):
+    peticije = ['imasjajca.djndtrue.dzzztrue', 'imasjajca.djndtrue.dzzzfalse', 'imasjajca.djndfalse.dzzzfalse', 'imasjajca.djndfalse.dzzztrue']
+    hide = 'imasjajcaHIDE'
+
+    exclude_emails = MailAddress.objects.filter(type_of=hide).values_list('e_mail', flat=True)
+    all_emails = MailAddress.objects.filter(type_of__in=peticije).exclude(e_mail__in=exclude_emails).values_list('name', 'e_mail')
+
+    email_set = set()
+    all_emails = [email_set.add(e[1]) or e[0] for e in all_emails if e[1] not in email_set]
+
+    out = ', '.join(all_emails)
+    return JsonResponse({'names': out, 'counter': len(all_emails)})
+
+
+def exportKura():
+    peticije = ['imasjajca.djndtrue.dzzztrue', 'imasjajca.djndtrue.dzzzfalse', 'imasjajca.djndfalse.dzzzfalse', 'imasjajca.djndfalse.dzzztrue']
+
+    all_emails = MailAddress.objects.filter(type_of__in=peticije).values_list('name', 'e_mail')
+
+    email_set = set()
+    all_emails = [email_set.add(e[1]) or e[0] for e in all_emails if e[1] not in email_set]
+    print([name for name in all_emails])
+    with open('all.txt','w') as out:
+        out.writelines([str(name.encode('utf-8').strip() + "\n") for name in all_emails])
+
+ 
+def exportKuraDJND():
+    peticije = ['imasjajca.djndtrue.dzzztrue', 'imasjajca.djndtrue.dzzzfalse']
+
+    all_emails = MailAddress.objects.filter(type_of__in=peticije).values_list('name', 'e_mail')
+
+    email_set = set()
+    all_emails = [email_set.add(e[1]) or e[0] for e in all_emails if e[1] not in email_set]
+    print([name for name in all_emails])
+    with open('all.txt','w') as out:
+        out.writelines([str(name.encode('utf-8').strip() + "\n") for name in all_emails])
+

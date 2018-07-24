@@ -6,6 +6,9 @@ from .models import *
 
 class MailAdmin(admin.ModelAdmin):
     list_filter = ('type_of',)
+    search_fields = ('e_mail', 'name')
+    list_display = ('e_mail', 'name', 'type_of')
+
 
 admin.site.register(Vote)
 admin.site.register(MailAddress, MailAdmin)
