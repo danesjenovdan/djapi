@@ -7,3 +7,4 @@ class Lock(models.Model):
   code = models.TextField(default='', blank=True)
   activated_at = models.DateTimeField(blank=True, null=True)
   computer = models.TextField(default='', blank=True)
+  username = models.TextField(default='', blank=True)
