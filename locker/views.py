@@ -32,9 +32,10 @@ def openLock(request):
         thelock.save()
       else:
         # code was already open, it has computer and user strings
-        # 
+        # check if computer strings match
         if thelock.computer != computer:
           return HttpResponse('Ta koda je že bila uporabljena na drugem računalniku. :/')
+        # check if username strings match
         if thelock.username != username:
           return HttpResponse('To kodo je že uporabil drug uporabnik. :/')
   
