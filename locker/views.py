@@ -9,6 +9,7 @@ from locker.locking import *
 def openLock(request):
   code = request.GET.get('code', '')
   computer = request.GET.get('computer', '')
+  username = request.GET.get('username', '')
   thelock = Lock.objects.filter(code=code)
 
   if thelock.count() == 0:
@@ -27,10 +28,14 @@ def openLock(request):
         thelock.opened = True
         thelock.activated_at = timezone.localtime()
         thelock.computer = computer
+        thelock.username = username
         thelock.save()
       else:
-        # code was already open, it has a computer string
+        # code was already open, it has computer and user strings
+        # 
         if thelock.computer != computer:
           return HttpResponse('Ta koda je že bila uporabljena na drugem računalniku. :/')
+        if thelock.username != username:
+          return HttpResponse('To kodo je že uporabil drug uporabnik. :/')
   
   return HttpResponse(1)
