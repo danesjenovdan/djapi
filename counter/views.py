@@ -98,6 +98,36 @@ def addSignatureMail(request):
     return HttpResponse('Napaka!')
 
 
+@csrf_exempt
+def sendMailParlameterOrg(request):
+    if request.method == 'POST':
+        name = strip_tags(request.POST.get('name', ''))
+        organization = strip_tags(request.POST.get('organization', ''))
+        email = strip_tags(request.POST.get('email', ''))
+        message = strip_tags(request.POST.get('message', ''))
+        if name and organization and email and message:
+            # referer = request.META.get('HTTP_REFERER', '')
+            # if '//parlameter.org/' in referer:
+            requests.post(
+                settings.MAILGUN_API,
+                auth=('api', settings.MAILGUN_ACCESS_KEY),
+                data={
+                    'from': settings.FROM_MAIL,
+                    'to': 'vsi@danesjenovdan.si',
+                    'subject': 'Parlameter.org - contact from: ' + name,
+                    'text': 'Name: ' + name + '\n' +
+                            'Organization: ' + organization + '\n' +
+                            'Email: ' + email + '\n' +
+                            'Message: \n\n' + message,
+                    'h:Reply-To': email,
+                }
+            )
+
+            return HttpResponse('Sent')
+        return HttpResponse('Error: Missing parameters')
+    return HttpResponse('Error')
+
+
 def getAllSignatures(request):
 	peticija = request.GET.get('peticija', '')
 	names = MailAddress.objects.filter(type_of=peticija).values_list('name', flat=True)

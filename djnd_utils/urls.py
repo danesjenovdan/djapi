@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^getKuraSignatures/', getFasterKura),
     url(r'^getAllSignaturesAndCountForMultiple/', getAllSignaturesAndCountForMultiple),
     url(r'^sendTweet/', sendTweet),
+    url(r'^sendMailParlameterOrg', sendMailParlameterOrg),
 
     url(r'^locker/', include('locker.urls')),
 ]
