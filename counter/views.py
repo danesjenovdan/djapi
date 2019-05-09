@@ -97,6 +97,23 @@ def addSignatureMail(request):
         return HttpResponse('Napaka, manjkajo parametri!')
     return HttpResponse('Napaka!')
 
+@csrf_exempt
+def addSignatureNoMail(request):
+    name = strip_tags(request.GET.get('name', ''))
+    email = strip_tags(request.GET.get('email', ''))
+    peticija = request.GET.get('peticija', '')
+    if peticija and name:
+        MailAddress(e_mail=email, type_of=peticija, name=name).save()
+        response = HttpResponse("Saved")
+    response = HttpResponse('Napaka, manjkajo parametri!')
+
+    response["Access-Control-Allow-Origin"] = "*"
+    response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+    response["Access-Control-Max-Age"] = "1000"
+    response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
+
+    return response
+
 
 @csrf_exempt
 def sendMailParlameterOrg(request):

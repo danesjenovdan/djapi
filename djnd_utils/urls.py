@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^add/(?P<type_>[\w].+)', plusOne),
     url(r'^counter/(?P<type_>[\w].+)', getCoutner),
     url(r'^sign/', addSignature),
+    url(r'^sign-no-mail/', addSignatureNoMail),
     url(r'^sign-mail/', addSignatureMail),
     url(r'^getNumberOfSignatures/', getNumberOfSignatures),
     url(r'^getAllSignatures/', getAllSignatures),
