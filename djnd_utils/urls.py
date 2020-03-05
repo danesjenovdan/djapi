@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^tinymce/', include('tinymce.urls')),
     url(r'^getKuraSignatures/', getFasterKura),
     url(r'^getAllSignaturesAndCountForMultiple/', getAllSignaturesAndCountForMultiple),
+    url(r'^getPublicSignaturesAndFullCountForMultiple', getPublicSignaturesAndFullCountForMultiple),
     url(r'^sendTweet/', sendTweet),
     url(r'^sendMailParlameterOrg', sendMailParlameterOrg),
 

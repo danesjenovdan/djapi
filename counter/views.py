@@ -2,7 +2,7 @@
 
 from django.shortcuts import render
 from .models import Vote, MailAddress
-from django.http import HttpResponse, JsonResponse 
+from django.http import HttpResponse, JsonResponse
 from django.core.mail import send_mail
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -105,7 +105,8 @@ def addSignatureNoMail(request):
     if peticija and name:
         MailAddress(e_mail=email, type_of=peticija, name=name).save()
         response = HttpResponse("Saved")
-    response = HttpResponse('Napaka, manjkajo parametri!')
+    else:
+	response = HttpResponse('Napaka, manjkajo parametri!')
 
     response["Access-Control-Allow-Origin"] = "*"
     response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
@@ -172,6 +173,35 @@ def getAllSignaturesAndCountForMultiple(request):
 
         out = ', '.join(all_emails)
         counter = len(all_emails)
+
+    return JsonResponse({'names': out, 'counter': counter})
+
+
+def getPublicSignaturesAndFullCountForMultiple(request):
+    peticije = request.GET.get('peticije', '')
+
+    out = ''
+    counter = 0
+
+    if peticije:
+        # get all names and emails for signatures that start with "name."
+        peticije = peticije + '.'
+        all_signatures_qs = MailAddress.objects.filter(type_of__startswith=peticije)
+        all_signatures = all_signatures_qs.values_list('name', 'e_mail')
+        # only take one signature per email
+        email_set = set()
+        all_names_for_unique_emails = [email_set.add(e[1]) or e[0] for e in all_signatures if e[1] not in email_set]
+        # count number of signatures
+        counter = len(all_names_for_unique_emails)
+        # exclude private names
+        peticije_private = peticije + 'private.'
+        exclude_emails = MailAddress.objects.filter(type_of__startswith=peticije_private).values_list('e_mail', flat=True)
+        all_public_signatures = all_signatures_qs.exclude(e_mail__in=exclude_emails).values_list('name', 'e_mail')
+        # only take one signature per email
+        email_set = set()
+        all_public_names_for_unique_emails = [email_set.add(e[1]) or e[0] for e in all_public_signatures if e[1] not in email_set]
+        # join all names
+        out = ', '.join(all_names_for_unique_emails)
 
     return JsonResponse({'names': out, 'counter': counter})
 
