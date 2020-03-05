@@ -201,7 +201,7 @@ def getPublicSignaturesAndFullCountForMultiple(request):
         email_set = set()
         all_public_names_for_unique_emails = [email_set.add(e[1]) or e[0] for e in all_public_signatures if e[1] not in email_set]
         # join all names
-        out = ', '.join(all_names_for_unique_emails)
+        out = ', '.join(all_public_names_for_unique_emails)
 
     return JsonResponse({'names': out, 'counter': counter})
 
